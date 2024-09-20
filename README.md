@@ -57,6 +57,7 @@ You can see working the examples from `.storybook/stories` [here](https://gabote
 | Prop              |              Type              | Required |                            Notes                            |
 |-------------------|:------------------------------:|:--------:|:-----------------------------------------------------------:|
 | `url`             |            `string`            |  `true`  |                     url of the Stl file                     |
+| `model`           |   `string` or `ArrayBuffer`    | `false`  |             raw stl data, takes priority over `url`         |
 | `cameraProps`     |         `CameraProps`          | `false`  |                camera properties, see below                 |
 | `modelProps`      |          `ModelProps`          | `false`  |               3d model properties, see below                |
 | `floorProps`      |          `FloorProps`          | `false`  |                 floor properties, see below                 |
