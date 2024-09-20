@@ -1,6 +1,5 @@
 import React, { CSSProperties, useEffect, useMemo, useState } from 'react'
-import { useFrame, useLoader, useThree } from '@react-three/fiber'
-import { STLLoader } from 'three-stdlib/loaders/STLLoader'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Box3, BufferGeometry, Color, Group, Mesh } from 'three'
 import { STLExporter } from './exporters/STLExporter'
 import Model3D, { ModelDimensions } from './SceneElements/Model3D'
@@ -8,6 +7,7 @@ import Floor from './SceneElements/Floor'
 import Lights from './SceneElements/Lights'
 import Camera, { CameraPosition, polarToCartesian } from './SceneElements/Camera'
 import OrbitControls from './SceneElements/OrbitControls'
+import { useGeometry } from './useGeometry'
 
 const INITIAL_LATITUDE = Math.PI / 8
 const INITIAL_LONGITUDE = -Math.PI / 8
@@ -49,6 +49,7 @@ export interface ModelProps {
 
 export interface SceneSetupProps {
   url: string
+  model: ArrayBuffer | string | undefined
   /** @deprecated use cameraProps.initialPosition instead */
   cameraInitialPosition?: Partial<CameraPosition>
   extraHeaders?: Record<string, string>
@@ -64,6 +65,7 @@ export interface SceneSetupProps {
 const SceneSetup: React.FC<SceneSetupProps> = (
   {
     url,
+    model,
     extraHeaders,
     shadows = false,
     showAxes = false,
@@ -115,13 +117,9 @@ const SceneSetup: React.FC<SceneSetupProps> = (
   const [sceneReady, setSceneReady] = useState(false)
   useEffect(() => {
     setSceneReady(false)
-  }, [url])
+  }, [url, model])
 
-  const geometry = useLoader(
-    STLLoader,
-    url,
-    (loader) => loader.setRequestHeader(extraHeaders ?? {})
-  )
+  const geometry = useGeometry(url, model, extraHeaders)
 
   const processedGeometry = useMemo(
     () => geometryProcessor?.(geometry) ?? geometry,
